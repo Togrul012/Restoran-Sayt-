@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restoran Saytı</title>
+  <link rel="icon" href="ChatGPT Image 23 мая 2025 г., 10_48_14.png">
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      min-height: 100vh;
+      background-image: url('https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+    .sun {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, #ffdb58 0%, #ff9900 70%, rgba(255, 153, 0, 0.3) 100%);
+      border-radius: 50%;
+      animation: sunrise 10s ease-in-out infinite;
+      z-index: 10;
+    }
+    @keyframes sunrise {
+      0% { transform: translateY(100px); opacity: 0.5; }
+      50% { transform: translateY(0); opacity: 0.9; }
+      100% { transform: translateY(100px); opacity: 0.5; }
+    }
+    @media (max-width: 768px) {
+      body {
+        background-image: url('https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg?auto=compress&cs=tinysrgb&w=600');
+      }
+      .sun {
+        width: 60px;
+        height: 60px;
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        background-image: url('https://images.pexels.com/photos/260922/pexels-photo-260922.jpeg?auto=compress&cs=tinysrgb&w=400');
+      }
+      .sun {
+        width: 50px;
+        height: 50px;
+      }
+    }
+    .menu-item {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .menu-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .menu-list {
+      animation: slideIn 0.5s ease-in-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    h1 {
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const App = () => {
+      const [isMenuOpen, setIsMenuOpen] = useState(false);
+      const [selectedItem, setSelectedItem] = useState(null);
+      const [quantity, setQuantity] = useState(1);
+      const [cart, setCart] = useState([]);
+      const [phoneNumber, setPhoneNumber] = useState('');
+
+      const menuItems = [
+        { id: 1, name: "Burger", price: 5.99, img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd" },
+        { id: 2, name: "Pizza", price: 8.99, img: "https://images.pexels.com/photos/825661/pexels-photo-825661.jpeg" },
+        { id: 3, name: "Pasta", price: 7.49, img: "https://images.pexels.com/photos/1438672/pexels-photo-1438672.jpeg" },
+        { id: 4, name: "Salat", price: 4.99, img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd" },
+        { id: 5, name: "Kabab", price: 6.99, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9wwhoMKVCJA_n3kEKt8SYjylubZLjVfenGQ&s" },
+        { id: 6, name: "Sushi", price: 9.99, img: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c" },
+        { id: 7, name: "Steyk", price: 12.99, img: "https://images.pexels.com/photos/769289/pexels-photo-769289.jpeg" },
+        { id: 8, name: "Dondurma", price: 3.99, img: "https://images.pexels.com/photos/1294947/pexels-photo-1294947.jpeg" },
+        { id: 9, name: "Qızartma", price: 6.49, img: "https://images.pexels.com/photos/1893556/pexels-photo-1893556.jpeg" },
+        { id: 10, name: "Lahmacun", price: 4.49, img: "https://www.andy-cooks.com/cdn/shop/articles/20230925162520-andy-20cooks-20-20lahmacun.jpg?v=1695663292" },
+        { id: 11, name: "Şorba", price: 3.49, img: "https://images.pexels.com/photos/539451/pexels-photo-539451.jpeg" },
+        { id: 12, name: "Toyuq Qanadları", price: 7.99, img: "https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg" },
+        { id: 13, name: "Sendviç", price: 5.49, img: "https://images.pexels.com/photos/1600711/pexels-photo-1600711.jpeg" },
+        { id: 14, name: "Lazanya", price: 8.49, img: "https://images.pexels.com/photos/4079522/pexels-photo-4079522.jpeg" },
+        { id: 15, name: "Pankek", price: 4.29, img: "https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg" },
+        { id: 16, name: "Tiramisu", price: 5.99, img: "https://mediterraneantaste.com/wp-content/uploads/2023/11/tiramisu-4583.jpg" },
+      ];
+
+      const handleMenuToggle = () => {
+        setIsMenuOpen(!isMenuOpen);
+        setSelectedItem(null);
+      };
+
+      const handleItemClick = (item) => {
+        setSelectedItem(item);
+        setQuantity(1);
+      };
+
+      const handleOrder = () => {
+        if (!phoneNumber) {
+          alert('Zəhmət olmasa telefon nömrənizi daxil edin.');
+          return;
+        }
+        const newOrder = { ...selectedItem, quantity, phoneNumber };
+        setCart([...cart, newOrder]);
+        console.log(`${quantity} ədəd ${selectedItem.name} sifariş edildi! Toplam: ${(quantity * selectedItem.price).toFixed(2)} AZN`);
+        alert(`${quantity} ədəd ${selectedItem.name} sifariş edildi! Toplam: ${(quantity * selectedItem.price).toFixed(2)} AZN`);
+        setSelectedItem(null);
+      };
+
+      const handleConfirmOrder = () => {
+        if (!phoneNumber) {
+          alert('Zəhmət olmasa telefon nömrənizi daxil edin.');
+          return;
+        }
+        const callUUID = `CALL-${Math.random().toString(36).substr(2, 9)}`;
+        alert(`Sizin sifarişiniz təsdiqləndi! Telefon nömrəniz: ${phoneNumber}. Zəng başlatıldı: ${callUUID}`);
+        setCart([]);
+        setPhoneNumber('');
+      };
+
+      return (
+        <div className="relative min-h-screen">
+          <div className="sun"></div>
+          <div className="container mx-auto p-4">
+            <div className="flex justify-between items-center mb-8">
+              <h1 className="text-4xl font-bold text-center text-white animate-pulse">
+                Xoş Gəlmisiniz!
+              </h1>
+              {cart.length > 0 && (
+                <button
+                  className="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition duration-300"
+                  onClick={handleConfirmOrder}
+                >
+                  Sifarişi Təsdiqləyin
+                </button>
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="block text-white mb-2">Telefon nömrənizi daxil edin:</label>
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="+994XXXXXXXXX"
+                className="w-full sm:w-1/3 p-2 border rounded"
+              />
+            </div>
+            <button
+              className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition duration-300"
+              onClick={handleMenuToggle}
+            >
+              {isMenuOpen ? "Menyunu Bağla" : "Menyunu Aç"}
+            </button>
+            {isMenuOpen && (
+              <div className="menu-list grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+                {menuItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="menu-item bg-white rounded-lg shadow-lg p-4 cursor-pointer"
+                    onClick={() => handleItemClick(item)}
+                  >
+                    <img
+                      src={item.img}
+                      alt={item.name}
+                      className="w-full h-48 object-cover rounded-lg mb-4"
+                    />
+                    <h2 className="text-xl font-semibold">{item.name}</h2>
+                    <p className="text-gray-600">{item.price} AZN</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {selectedItem && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                  <h2 className="text-2xl font-bold mb-4">{selectedItem.name}</h2>
+                  <p className="text-gray-600 mb-4">Bir ədəd qiymət: {selectedItem.price} AZN</p>
+                  <p className="text-gray-800 font-semibold mb-4">Toplam: {(quantity * selectedItem.price).toFixed(2)} AZN</p>
+                  <label className="block mb-2">Neçə ədəd istəyirsiniz?</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    className="w-full p-2 border rounded mb-4"
+                  />
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                      onClick={() => setSelectedItem(null)}
+                    >
+                      Bağla
+                    </button>
+                    <button
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                      onClick={handleOrder}
+                    >
+                      Sifariş Ver
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
